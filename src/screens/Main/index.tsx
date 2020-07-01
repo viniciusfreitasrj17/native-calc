@@ -15,18 +15,24 @@ const Main: FC<Props> = () => {
   const [option, setOption] = useState("+");
   const [inputOne, setInputOne] = useState(0);
   const [inputTwo, setInputTwo] = useState(0);
-  const [resultado, setResultado] = useState(0);
+  const [resultado, setResultado] = useState([] as number[]);
 
   const Calculator = () => {
     switch (option) {
       case "+":
-        setResultado(inputOne + inputTwo);
+        setResultado([inputOne + inputTwo]);
+        break;
       case "-":
-        setResultado(inputOne - inputTwo);
+        setResultado([inputOne - inputTwo]);
+        break;
       case "*":
-        setResultado(inputOne * inputTwo);
+        setResultado([inputOne * inputTwo]);
+        break;
       case "/":
-        setResultado(inputOne / inputTwo);
+        setResultado([inputOne / inputTwo]);
+        break;
+      default:
+        throw console.error("Invalid Operation");
     }
 
     return;
@@ -35,7 +41,7 @@ const Main: FC<Props> = () => {
   const Reset = () => {
     setInputOne(0);
     setInputTwo(0);
-    setResultado(0);
+    setResultado([]);
     return;
   };
 
