@@ -7,6 +7,7 @@ interface Props {
   max?: number;
   onValueChange: (value: number) => void;
   style?: StyleProp<TextStyle>;
+  refI?: any;
   value: number;
 }
 
@@ -15,6 +16,7 @@ const CurrencyInput: FC<Props> = ({
   onValueChange,
   style,
   value,
+  refI,
 }) => {
   const valueAbsTrunc = Math.trunc(Math.abs(value));
   if (
@@ -45,6 +47,7 @@ const CurrencyInput: FC<Props> = ({
   return (
     <>
       <TextInput
+        ref={refI}
         contextMenuHidden
         keyboardType="numeric"
         onChangeText={handleChangeText}

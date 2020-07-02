@@ -1,8 +1,9 @@
-import React, { FC, useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import React, { FC, useState, useEffect, RefObject, createRef } from "react";
+import { Text, View, TouchableOpacity } from "react-native";
 import { Picker } from "@react-native-community/picker";
 
 import InputNumber from "../../components/InputNumber";
+import styles from "./styles";
 
 interface StateProps {
   value?: any;
@@ -16,23 +17,39 @@ const Main: FC<Props> = () => {
   const [inputOne, setInputOne] = useState(0);
   const [inputTwo, setInputTwo] = useState(0);
   const [resultado, setResultado] = useState([] as number[]);
+  const [emptyInputOne, setEmptyInputOne] = useState({});
+  const [emptyInputTwo, setEmptyInputTwo] = useState({});
+  const refInput1: RefObject<HTMLInputElement> = createRef();
+  const refInput2: RefObject<HTMLInputElement> = createRef();
 
   const Calculator = () => {
-    switch (option) {
-      case "+":
-        setResultado([inputOne + inputTwo]);
-        break;
-      case "-":
-        setResultado([inputOne - inputTwo]);
-        break;
-      case "*":
-        setResultado([inputOne * inputTwo]);
-        break;
-      case "/":
-        setResultado([inputOne / inputTwo]);
-        break;
-      default:
-        throw console.error("Invalid Operation");
+    if (inputOne && inputTwo) {
+      switch (option) {
+        case "+":
+          setResultado([inputOne + inputTwo]);
+          break;
+        case "-":
+          setResultado([inputOne - inputTwo]);
+          break;
+        case "*":
+          setResultado([inputOne * inputTwo]);
+          break;
+        case "/":
+          setResultado([inputOne / inputTwo]);
+          break;
+        default:
+          throw console.error("Invalid Operation");
+      }
+    } else {
+      const color = { borderColor: "#F00" };
+      if (!inputOne) {
+        refInput1.current?.focus();
+        setEmptyInputOne(color);
+      } else {
+        refInput2.current?.focus();
+        setEmptyInputTwo(color);
+      }
+      alert("Preencha os campos");
     }
 
     return;
@@ -42,8 +59,18 @@ const Main: FC<Props> = () => {
     setInputOne(0);
     setInputTwo(0);
     setResultado([]);
+
     return;
   };
+
+  useEffect(() => {
+    refInput1.current?.focus();
+  }, [resultado]);
+
+  useEffect(() => {
+    emptyInputOne && inputOne ? setEmptyInputOne({}) : null;
+    emptyInputTwo && inputTwo ? setEmptyInputTwo({}) : null;
+  }, [inputOne, inputTwo]);
 
   return (
     <View style={styles.container}>
@@ -52,9 +79,10 @@ const Main: FC<Props> = () => {
       <View style={styles.containerCalc}>
         <InputNumber
           max={100000000}
-          style={styles.input}
+          style={[styles.input, emptyInputOne]}
           onValueChange={(one: number) => setInputOne(one)}
           value={inputOne}
+          refI={refInput1}
         />
 
         <Picker
@@ -71,9 +99,10 @@ const Main: FC<Props> = () => {
 
         <InputNumber
           max={100000000}
-          style={styles.input}
+          style={[styles.input, emptyInputTwo]}
           onValueChange={(two: number) => setInputTwo(two)}
           value={inputTwo}
+          refI={refInput2}
         />
       </View>
 
@@ -89,50 +118,5 @@ const Main: FC<Props> = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    marginBottom: 5,
-  },
-  containerCalc: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 5,
-  },
-  input: {
-    width: 100,
-    height: 40,
-    textAlign: "center",
-    borderWidth: 1,
-  },
-  checkbox: {
-    height: 50,
-    width: 75,
-    marginHorizontal: 20,
-    borderWidth: 4,
-  },
-  check: {
-    fontSize: 200,
-    fontWeight: "bold",
-  },
-  button: {
-    width: 80,
-    height: 30,
-    borderRadius: 10,
-    backgroundColor: "pink",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  result: {
-    marginTop: 5,
-    fontWeight: "bold",
-  },
-});
 
 export default Main;
